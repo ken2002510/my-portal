@@ -1,5 +1,5 @@
 // ===== Visitor Page Logic =====
-import { getData } from './data.js';
+import { getData, listenForChanges } from './data.js';
 import { fetchExchangeRates, CURRENCY_INFO } from './exchange.js';
 
 // Social platform SVG icons
