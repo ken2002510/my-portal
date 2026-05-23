@@ -1,7 +1,7 @@
 // ===== Data Model & Firebase Manager =====
 
 import { initializeApp } from "firebase/app";
-import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "firebase/firestore";
+import { initializeFirestore, doc, getDoc, setDoc, onSnapshot } from "firebase/firestore";
 
 // Your Firebase configuration
 const firebaseConfig = {
@@ -16,7 +16,9 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const db = initializeFirestore(app, {
+  experimentalForceLongPolling: true
+});
 
 // We will store all data in a single document: collection "portaly", document "my-data"
 const DATA_DOC_REF = doc(db, "portaly", "my-data");
