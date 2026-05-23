@@ -20,6 +20,7 @@ const db = getFirestore(app);
 
 // We will store all data in a single document: collection "portaly", document "my-data"
 const DATA_DOC_REF = doc(db, "portaly", "my-data");
+const FIREBASE_TIMEOUT_MS = 7000;
 
 const DEFAULT_DATA = {
   profile: {
@@ -60,7 +61,7 @@ const DEFAULT_DATA = {
 
 export async function getData() {
   try {
-    const docSnap = await getDoc(DATA_DOC_REF);
+    const docSnap = await withTimeout(getDoc(DATA_DOC_REF), FIREBASE_TIMEOUT_MS);
     if (docSnap.exists()) {
       return deepMerge(structuredClone(DEFAULT_DATA), docSnap.data());
     } else {
@@ -75,7 +76,7 @@ export async function getData() {
 
 export async function saveData(data) {
   try {
-    await setDoc(DATA_DOC_REF, data);
+    await withTimeout(setDoc(DATA_DOC_REF, data), FIREBASE_TIMEOUT_MS);
     return true;
   } catch (e) {
     console.error('Failed to save to Firebase:', e);
@@ -90,13 +91,15 @@ export async function resetData() {
 }
 
 // Real-time listener for the visitor page (optional, but good for instant updates!)
-export function listenForChanges(callback) {
+export function listenForChanges(callback, onError = console.warn) {
   return onSnapshot(DATA_DOC_REF, (doc) => {
     if (doc.exists()) {
       callback(deepMerge(structuredClone(DEFAULT_DATA), doc.data()));
     } else {
       callback(structuredClone(DEFAULT_DATA));
     }
+  }, (error) => {
+    onError('Firebase listener failed:', error);
   });
 }
 
@@ -150,6 +153,15 @@ function deepMerge(target, source) {
     }
   }
   return target;
+}
+
+function withTimeout(promise, timeoutMs) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('Firebase request timed out')), timeoutMs);
+    })
+  ]);
 }
 
 export async function exportData() {

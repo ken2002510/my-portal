@@ -1,5 +1,5 @@
 // ===== Visitor Page Logic =====
-import { getData, listenForChanges } from './data.js';
+import { DEFAULT_DATA, getData, listenForChanges } from './data.js';
 import { fetchExchangeRates, CURRENCY_INFO } from './exchange.js';
 
 // Social platform SVG icons
@@ -22,15 +22,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Show a simple loading text initially
   document.body.insertAdjacentHTML('afterbegin', '<div id="app-loading" style="position:fixed;inset:0;background:var(--bg-gradient);z-index:9999;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:bold;color:var(--pink-500);">載入中 ✨...</div>');
 
+  appData = structuredClone(DEFAULT_DATA);
+  renderPage();
+  renderDecorations();
+  initExchangeRates();
+  document.getElementById('app-loading')?.remove();
+
   try {
     appData = await getData();
     renderPage();
-    renderDecorations();
     initExchangeRates();
   } catch (err) {
     console.error("Error loading data", err);
-  } finally {
-    document.getElementById('app-loading')?.remove();
   }
 
   // Set up real-time listener from Firebase

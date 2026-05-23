@@ -9,7 +9,17 @@
   <link rel="stylesheet" href="/css/common.css" />
   <link rel="stylesheet" href="/css/admin.css" />
 </head>
-<body>
+<body class="admin-locked">
+  <div class="admin-login" id="admin-login">
+    <form class="admin-login-card" id="admin-login-form">
+      <div class="admin-login-logo">✨ My Portal 管理</div>
+      <label class="form-label" for="admin-password">管理密碼</label>
+      <input type="password" class="form-input" id="admin-password" autocomplete="current-password" />
+      <button class="admin-btn admin-btn-primary" type="submit">登入</button>
+      <p class="admin-login-error" id="admin-login-error" role="alert"></p>
+    </form>
+  </div>
+
   <div class="admin-layout">
 
     <!-- ===== Editor Panel (Left) ===== -->
