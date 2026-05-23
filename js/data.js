@@ -1,6 +1,25 @@
-// ===== Data Model & localStorage Manager =====
+// ===== Data Model & Firebase Manager =====
 
-const STORAGE_KEY = 'portaly_data';
+import { initializeApp } from "firebase/app";
+import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "firebase/firestore";
+
+// Your Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyCPEfv1-5pcFGIMiV5rF7EhLej2Wqy5ZhI",
+  authDomain: "porfile-cb9ea.firebaseapp.com",
+  projectId: "porfile-cb9ea",
+  storageBucket: "porfile-cb9ea.firebasestorage.app",
+  messagingSenderId: "230349125579",
+  appId: "1:230349125579:web:ef30c14cce0821d4b0284e",
+  measurementId: "G-KCCTTPPXG9"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// We will store all data in a single document: collection "portaly", document "my-data"
+const DATA_DOC_REF = doc(db, "portaly", "my-data");
 
 const DEFAULT_DATA = {
   profile: {
@@ -29,79 +48,64 @@ const DEFAULT_DATA = {
     currencies: ['USD', 'JPY', 'EUR', 'KRW']
   },
   theme: {
-    bgStyle: 'gradient', // 'gradient' | 'solid' | 'image'
+    bgStyle: 'gradient',
     bgColor1: '#fce4ec',
     bgColor2: '#f3e5f5',
     bgColor3: '#e3f2fd',
-    cardStyle: 'glass' // 'glass' | 'solid' | 'outlined'
+    cardStyle: 'glass'
   }
 };
 
-// ===== Data Access Functions =====
+// ===== Data Access Functions (Async) =====
 
-export function getData() {
+export async function getData() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      // Merge with defaults to handle new fields added in updates
-      return deepMerge(structuredClone(DEFAULT_DATA), parsed);
+    const docSnap = await getDoc(DATA_DOC_REF);
+    if (docSnap.exists()) {
+      return deepMerge(structuredClone(DEFAULT_DATA), docSnap.data());
+    } else {
+      // If doc doesn't exist yet, return default data
+      return structuredClone(DEFAULT_DATA);
     }
   } catch (e) {
-    console.warn('Failed to parse stored data, using defaults:', e);
+    console.warn('Failed to fetch from Firebase, using defaults:', e);
+    return structuredClone(DEFAULT_DATA);
   }
-  return structuredClone(DEFAULT_DATA);
 }
 
-export function saveData(data) {
+export async function saveData(data) {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    await setDoc(DATA_DOC_REF, data);
     return true;
   } catch (e) {
-    console.error('Failed to save data:', e);
+    console.error('Failed to save to Firebase:', e);
     return false;
   }
 }
 
-export function resetData() {
-  localStorage.removeItem(STORAGE_KEY);
-  return structuredClone(DEFAULT_DATA);
+export async function resetData() {
+  const data = structuredClone(DEFAULT_DATA);
+  await saveData(data);
+  return data;
 }
 
-export function exportData() {
-  const data = getData();
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `portaly-backup-${new Date().toISOString().slice(0, 10)}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-export function importData(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const data = JSON.parse(e.target.result);
-        saveData(data);
-        resolve(data);
-      } catch (err) {
-        reject(new Error('Invalid JSON file'));
-      }
-    };
-    reader.onerror = () => reject(new Error('Failed to read file'));
-    reader.readAsText(file);
+// Real-time listener for the visitor page (optional, but good for instant updates!)
+export function listenForChanges(callback) {
+  return onSnapshot(DATA_DOC_REF, (doc) => {
+    if (doc.exists()) {
+      callback(deepMerge(structuredClone(DEFAULT_DATA), doc.data()));
+    } else {
+      callback(structuredClone(DEFAULT_DATA));
+    }
   });
 }
 
-// ===== Link CRUD =====
+// ===== Link CRUD Helpers =====
+// Note: These now modify the object in-place and you must call saveData(data) afterwards!
 
 export function addLink(data, link) {
   link.id = 'link_' + Date.now();
   data.links.push(link);
-  saveData(data);
   return data;
 }
 
@@ -109,21 +113,18 @@ export function updateLink(data, id, updates) {
   const idx = data.links.findIndex(l => l.id === id);
   if (idx !== -1) {
     data.links[idx] = { ...data.links[idx], ...updates };
-    saveData(data);
   }
   return data;
 }
 
 export function removeLink(data, id) {
   data.links = data.links.filter(l => l.id !== id);
-  saveData(data);
   return data;
 }
 
 export function reorderLinks(data, fromIdx, toIdx) {
   const [item] = data.links.splice(fromIdx, 1);
   data.links.splice(toIdx, 0, item);
-  saveData(data);
   return data;
 }
 

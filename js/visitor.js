@@ -18,20 +18,27 @@ const DECORATIONS = ['⭐', '💖', '🌸', '☁️', '✨', '🦋', '🌈', '�
 let appData = null;
 
 // Initialize on DOM ready
-document.addEventListener('DOMContentLoaded', () => {
-  appData = getData();
-  renderPage();
-  renderDecorations();
-  initExchangeRates();
-});
+document.addEventListener('DOMContentLoaded', async () => {
+  // Show a simple loading text initially
+  document.body.insertAdjacentHTML('afterbegin', '<div id="app-loading" style="position:fixed;inset:0;background:var(--bg-gradient);z-index:9999;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:bold;color:var(--pink-500);">載入中 ✨...</div>');
 
-// Listen for storage changes (from admin page)
-window.addEventListener('storage', (e) => {
-  if (e.key === 'portaly_data') {
-    appData = getData();
+  try {
+    appData = await getData();
+    renderPage();
+    renderDecorations();
+    initExchangeRates();
+  } catch (err) {
+    console.error("Error loading data", err);
+  } finally {
+    document.getElementById('app-loading')?.remove();
+  }
+
+  // Set up real-time listener from Firebase
+  listenForChanges((newData) => {
+    appData = newData;
     renderPage();
     initExchangeRates();
-  }
+  });
 });
 
 function renderPage() {
