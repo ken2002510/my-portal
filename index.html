@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>My Portal ✨ | 個人連結頁面</title>
+  <meta name="description" content="歡迎來到我的個人連結頁面！這裡有我的社群連結、作品集和更多好玩的東西 ✨" />
+  <meta property="og:title" content="My Portal ✨" />
+  <meta property="og:description" content="歡迎來到我的個人連結頁面！" />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#fce4ec" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>" />
+  <link rel="stylesheet" href="/css/common.css" />
+  <link rel="stylesheet" href="/css/visitor.css" />
+</head>
+<body>
+  <div class="visitor-bg">
+    <!-- Floating decorations -->
+    <div class="floating-decos" id="floating-decos"></div>
+
+    <!-- Main content -->
+    <div class="visitor-container">
+
+      <!-- Profile Section -->
+      <section class="profile-section" id="profile-section">
+        <div class="avatar-wrapper anim-bounce-in">
+          <div class="avatar-ring">
+            <img id="avatar-img" class="avatar-img" src="/assets/avatar.png" alt="頭像" />
+          </div>
+          <span class="avatar-badge">🌟</span>
+        </div>
+        <h1 class="profile-name anim-fade-up delay-1" id="profile-name">你的名字</h1>
+        <p class="profile-bio anim-fade-up delay-2" id="profile-bio">✨ 歡迎來到我的小天地 ✨</p>
+      </section>
+
+      <!-- Social Icons -->
+      <div class="social-icons anim-fade-up delay-3" id="social-icons">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- Link Buttons -->
+      <div class="links-section" id="links-section">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- Exchange Rate -->
+      <section class="exchange-section" id="exchange-section">
+        <h2 class="section-title">💱 即時匯率</h2>
+        <div class="exchange-card glass-card">
+          <div class="exchange-grid" id="exchange-grid">
+            <!-- Rendered by JS -->
+          </div>
+          <div class="exchange-footer">
+            <span class="exchange-update" id="exchange-update">
+              <span class="exchange-live-dot"></span>載入中...
+            </span>
+            <button class="exchange-refresh-btn" id="exchange-refresh" onclick="refreshRates()">
+              🔄 重新整理
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Google Form -->
+      <section class="form-section" id="form-section">
+        <h2 class="section-title">📋 問卷調查</h2>
+        <div class="form-card glass-card">
+          <div class="form-content" id="form-content">
+            <div class="form-placeholder">
+              <span class="placeholder-emoji">📝</span>
+              <p>問卷即將上線，敬請期待！</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="visitor-footer">
+        made with 💖
+      </footer>
+
+    </div>
+  </div>
+
+  <script type="module" src="/js/visitor.js"></script>
+</body>
+</html>

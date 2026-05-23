@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>✏️ 管理後台 | My Portal</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✏️</text></svg>" />
+  <link rel="stylesheet" href="/css/common.css" />
+  <link rel="stylesheet" href="/css/admin.css" />
+</head>
+<body>
+  <div class="admin-layout">
+
+    <!-- ===== Editor Panel (Left) ===== -->
+    <div class="admin-panel">
+
+      <!-- Header -->
+      <div class="admin-header">
+        <div class="admin-logo">✨ My Portal 管理</div>
+        <div class="admin-actions">
+          <button class="admin-btn admin-btn-primary" id="btn-view-page">👁️ 預覽頁面</button>
+        </div>
+      </div>
+
+      <!-- Profile Section -->
+      <div class="admin-section">
+        <h2 class="admin-section-title"><span>👤</span> 個人資料</h2>
+        
+        <div class="form-group">
+          <label class="form-label">頭像</label>
+          <div class="avatar-upload-area">
+            <img id="avatar-preview" class="avatar-preview" src="/assets/avatar.png" alt="頭像預覽" />
+            <div class="avatar-upload-btn">
+              <label for="avatar-upload">
+                📷 更換頭像
+                <input type="file" id="avatar-upload" accept="image/*" />
+              </label>
+              <p class="form-hint">支援 JPG、PNG，最大 2MB</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="input-name">名稱</label>
+          <input type="text" class="form-input" id="input-name" placeholder="你的名字" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="input-bio">自我介紹</label>
+          <textarea class="form-textarea" id="input-bio" placeholder="寫一段自我介紹..."></textarea>
+        </div>
+      </div>
+
+      <!-- Social Links Section -->
+      <div class="admin-section">
+        <h2 class="admin-section-title"><span>🔗</span> 社群連結</h2>
+        <div class="social-edit-list" id="social-edit-list">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+      <!-- Link Buttons Section -->
+      <div class="admin-section">
+        <h2 class="admin-section-title"><span>🎯</span> 連結按鈕</h2>
+        <div class="link-edit-list" id="link-edit-list">
+          <!-- Rendered by JS -->
+        </div>
+        <button class="add-link-btn" id="add-link-btn">＋ 新增連結</button>
+      </div>
+
+      <!-- Google Form Section -->
+      <div class="admin-section">
+        <h2 class="admin-section-title"><span>📋</span> 問卷表單</h2>
+        
+        <div class="toggle-row">
+          <span class="toggle-label">顯示問卷區塊</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggle-form" checked />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="input-form-title">區塊標題</label>
+          <input type="text" class="form-input" id="input-form-title" placeholder="📋 問卷調查" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="input-form-url">Google 表單網址</label>
+          <input type="url" class="form-input" id="input-form-url" 
+                 placeholder="https://docs.google.com/forms/d/e/xxxx/viewform" />
+          <p class="form-hint">貼上 Google 表單的分享連結即可</p>
+        </div>
+      </div>
+
+      <!-- Exchange Rate Section -->
+      <div class="admin-section">
+        <h2 class="admin-section-title"><span>💱</span> 即時匯率</h2>
+        
+        <div class="toggle-row">
+          <span class="toggle-label">顯示匯率區塊</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggle-exchange" checked />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">顯示幣別（兌換新台幣 TWD）</label>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px;">
+            <label style="display:flex;align-items:center;gap:4px;font-size:0.85rem;cursor:pointer;">
+              <input type="checkbox" class="currency-checkbox" value="USD" checked /> 🇺🇸 USD
+            </label>
+            <label style="display:flex;align-items:center;gap:4px;font-size:0.85rem;cursor:pointer;">
+              <input type="checkbox" class="currency-checkbox" value="JPY" checked /> 🇯🇵 JPY
+            </label>
+            <label style="display:flex;align-items:center;gap:4px;font-size:0.85rem;cursor:pointer;">
+              <input type="checkbox" class="currency-checkbox" value="EUR" checked /> 🇪🇺 EUR
+            </label>
+            <label style="display:flex;align-items:center;gap:4px;font-size:0.85rem;cursor:pointer;">
+              <input type="checkbox" class="currency-checkbox" value="KRW" checked /> 🇰🇷 KRW
+            </label>
+            <label style="display:flex;align-items:center;gap:4px;font-size:0.85rem;cursor:pointer;">
+              <input type="checkbox" class="currency-checkbox" value="GBP" /> 🇬🇧 GBP
+            </label>
+            <label style="display:flex;align-items:center;gap:4px;font-size:0.85rem;cursor:pointer;">
+              <input type="checkbox" class="currency-checkbox" value="AUD" /> 🇦🇺 AUD
+            </label>
+            <label style="display:flex;align-items:center;gap:4px;font-size:0.85rem;cursor:pointer;">
+              <input type="checkbox" class="currency-checkbox" value="CNY" /> 🇨🇳 CNY
+            </label>
+            <label style="display:flex;align-items:center;gap:4px;font-size:0.85rem;cursor:pointer;">
+              <input type="checkbox" class="currency-checkbox" value="HKD" /> 🇭🇰 HKD
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Import / Export -->
+      <div class="admin-section">
+        <h2 class="admin-section-title"><span>💾</span> 資料管理</h2>
+        <div class="io-buttons">
+          <button class="admin-btn admin-btn-secondary" id="btn-export">📁 匯出設定</button>
+          <button class="admin-btn admin-btn-secondary" id="btn-import">📂 匯入設定</button>
+          <input type="file" id="import-file-input" accept=".json" style="display:none" />
+        </div>
+        <div style="margin-top: 10px;">
+          <button class="admin-btn admin-btn-danger" id="btn-reset">🔄 重設為預設值</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ===== Preview Panel (Right) ===== -->
+    <div class="preview-panel">
+      <div class="preview-toolbar">
+        <button class="preview-size-btn active" data-size="phone">📱 手機</button>
+        <button class="preview-size-btn" data-size="tablet">📱 平板</button>
+      </div>
+      <div class="preview-frame phone" id="preview-frame">
+        <div class="preview-notch"></div>
+        <iframe id="preview-iframe" class="preview-iframe" src="/"></iframe>
+      </div>
+    </div>
+
+  </div>
+
+  <script type="module" src="/js/admin.js"></script>
+</body>
+</html>
