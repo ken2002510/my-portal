@@ -1,6 +1,135 @@
 // ===== Admin Page Logic =====
 import { DEFAULT_DATA, getData, saveData, resetData, exportData, importData, addLink, removeLink } from './data.js';
 
+// ===== Emoji Picker =====
+const EMOJI_CATEGORIES = {
+  '⭐ 熱門': ['🔗', '🎨', '📸', '🎵', '🛍️', '✨', '💖', '🌸', '🎯', '🚀', '💡', '📝', '🎁', '🏆', '❤️', '🔥', '⚡', '🌈', '🦋', '💎'],
+  '😀 表情': ['😀', '😍', '🥰', '😎', '🤩', '😊', '🥳', '😂', '🤔', '😴', '🥺', '😡', '🤯', '😱', '🤗', '😇', '🙃', '😏', '🥸', '🤓'],
+  '🎨 創作': ['🎨', '🖌️', '✏️', '📐', '📏', '🎭', '🎬', '📷', '📸', '🎥', '🎞️', '🎤', '🎧', '🎼', '🎹', '🎸', '🥁', '🎺', '🎻', '🪗'],
+  '🍕 食物': ['🍕', '🍔', '🍜', '🍣', '🍰', '☕', '🧋', '🍦', '🎂', '🍩', '🍪', '🍫', '🍓', '🍑', '🍇', '🍉', '🥑', '🌮', '🥗', '🍱'],
+  '✈️ 旅遊': ['✈️', '🌍', '🗺️', '🏖️', '⛰️', '🗼', '🏯', '🎡', '🚂', '🚢', '🏕️', '🌅', '🌄', '🌠', '🌃', '🏙️', '🗽', '🎠', '⛵', '🚁'],
+  '💼 工作': ['💼', '📊', '📈', '💻', '🖥️', '⌨️', '🖱️', '📱', '📋', '📌', '📎', '🔧', '⚙️', '🔑', '🏢', '📬', '💰', '💳', '🤝', '📣'],
+  '💪 運動': ['⚽', '🏀', '🏈', '⚾', '🎾', '🏐', '🏉', '🎱', '🏓', '🏸', '🥊', '🏋️', '🤸', '🧘', '🏊', '🚴', '🤾', '⛷️', '🏄', '🧗'],
+  '🌿 自然': ['🌸', '🌺', '🌻', '🌹', '🍀', '🌿', '🌳', '🌵', '🦋', '🐝', '🐬', '🦁', '🐼', '🦊', '🐧', '🌙', '⭐', '🌊', '🔥', '❄️'],
+  '🎉 慶祝': ['🎉', '🎊', '🎈', '🎁', '🎀', '🏆', '🥇', '🎖️', '👑', '💝', '💕', '💫', '✨', '🌟', '⚡', '🎆', '🎇', '🧨', '🪄', '🔮'],
+};
+
+function closeAllEmojiPickers() {
+  document.querySelectorAll('.emoji-dropdown.open').forEach(d => d.classList.remove('open'));
+}
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.emoji-picker-wrapper')) closeAllEmojiPickers();
+});
+
+function createEmojiPicker(currentEmoji, onChange) {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'emoji-picker-wrapper';
+
+  const triggerBtn = document.createElement('button');
+  triggerBtn.type = 'button';
+  triggerBtn.className = 'emoji-trigger-btn';
+  triggerBtn.textContent = currentEmoji || '🔗';
+
+  const dropdown = document.createElement('div');
+  dropdown.className = 'emoji-dropdown';
+
+  const searchRow = document.createElement('div');
+  searchRow.className = 'emoji-search-row';
+
+  const searchInput = document.createElement('input');
+  searchInput.type = 'text';
+  searchInput.className = 'emoji-search-input';
+  searchInput.placeholder = '搜尋類別...';
+
+  const customInput = document.createElement('input');
+  customInput.type = 'text';
+  customInput.className = 'emoji-custom-input';
+  customInput.placeholder = '貼上';
+  customInput.title = '自己貼入任何 emoji';
+  customInput.maxLength = 8;
+
+  searchRow.appendChild(searchInput);
+  searchRow.appendChild(customInput);
+
+  const tabsEl = document.createElement('div');
+  tabsEl.className = 'emoji-tabs';
+
+  const gridEl = document.createElement('div');
+  gridEl.className = 'emoji-grid';
+
+  let currentCategory = Object.keys(EMOJI_CATEGORIES)[0];
+
+  function renderGrid(emojis) {
+    gridEl.innerHTML = '';
+    emojis.forEach(emoji => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'emoji-item' + (emoji === triggerBtn.textContent ? ' selected' : '');
+      btn.textContent = emoji;
+      btn.addEventListener('click', () => {
+        triggerBtn.textContent = emoji;
+        onChange(emoji);
+        closeAllEmojiPickers();
+      });
+      gridEl.appendChild(btn);
+    });
+  }
+
+  function switchCategory(catName) {
+    currentCategory = catName;
+    tabsEl.querySelectorAll('.emoji-tab').forEach(t => t.classList.toggle('active', t.dataset.cat === catName));
+    searchInput.value = '';
+    renderGrid(EMOJI_CATEGORIES[catName]);
+  }
+
+  Object.keys(EMOJI_CATEGORIES).forEach((cat, i) => {
+    const tab = document.createElement('button');
+    tab.type = 'button';
+    tab.className = 'emoji-tab' + (i === 0 ? ' active' : '');
+    tab.dataset.cat = cat;
+    tab.textContent = cat;
+    tab.addEventListener('click', () => switchCategory(cat));
+    tabsEl.appendChild(tab);
+  });
+
+  searchInput.addEventListener('input', () => {
+    const q = searchInput.value.trim().toLowerCase();
+    if (!q) { renderGrid(EMOJI_CATEGORIES[currentCategory]); return; }
+    const all = Object.values(EMOJI_CATEGORIES).flat();
+    renderGrid(all);
+  });
+
+  customInput.addEventListener('input', () => {
+    const val = customInput.value.trim();
+    if (val) {
+      triggerBtn.textContent = val;
+      onChange(val);
+      customInput.value = '';
+      closeAllEmojiPickers();
+    }
+  });
+
+  triggerBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = dropdown.classList.contains('open');
+    closeAllEmojiPickers();
+    if (!isOpen) {
+      dropdown.classList.add('open');
+      renderGrid(EMOJI_CATEGORIES[currentCategory]);
+      searchInput.focus();
+    }
+  });
+
+  dropdown.appendChild(searchRow);
+  dropdown.appendChild(tabsEl);
+  dropdown.appendChild(gridEl);
+  wrapper.appendChild(triggerBtn);
+  wrapper.appendChild(dropdown);
+
+  return wrapper;
+}
+
 const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD;
 const AUTH_KEY = 'portaly_admin_authenticated';
 
@@ -124,24 +253,32 @@ function renderLinksForm() {
     item.dataset.index = idx;
 
     item.innerHTML = `
-      <div class="link-edit-row">
-        <span class="link-edit-drag" title="拖曳排序">⋮⋮</span>
-        <input type="text" class="link-edit-emoji form-input"
-               value="${escapeAttr(link.emoji || '🔗')}"
-               data-field="emoji" maxlength="4" />
-        <input type="text" class="form-input" style="flex:1"
-               value="${escapeAttr(link.title)}"
-               placeholder="連結標題"
-               data-field="title" />
-        <button class="link-edit-delete" title="刪除" data-id="${link.id}">×</button>
-      </div>
-      <div class="link-edit-row">
-        <input type="url" class="form-input" style="flex:1"
-               value="${escapeAttr(link.url)}"
-               placeholder="https://..."
-               data-field="url" />
-      </div>
-    `;
+              <div class="link-edit-row">
+                <span class="link-edit-drag" title="拖曳排序">⋮⋮</span>
+                <span class="emoji-picker-mount"></span>
+                <input type="text" class="form-input" style="flex:1"
+                      value="${escapeAttr(link.title)}"
+                      placeholder="連結標題"
+                      data-field="title" />
+                <button class="link-edit-delete" title="刪除" data-id="${link.id}">×</button>
+              </div>
+              <div class="link-edit-row">
+                <input type="url" class="form-input" style="flex:1"
+                      value="${escapeAttr(link.url)}"
+                      placeholder="https://..."
+                      data-field="url" />
+              </div>
+            `;
+
+    // 把 emoji-picker-mount 換成真正的 picker
+    const emojiPickerMount = item.querySelector('.emoji-picker-mount');
+    const emojiPicker = createEmojiPicker(link.emoji || '🔗', (newEmoji) => {
+      if (appData.links[idx]) {
+        appData.links[idx].emoji = newEmoji;
+        autoSave();
+      }
+    });
+    emojiPickerMount.replaceWith(emojiPicker);
 
     item.querySelectorAll('input').forEach(input => {
       input.addEventListener('input', (e) => {
