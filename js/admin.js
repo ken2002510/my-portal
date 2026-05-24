@@ -1,7 +1,7 @@
 // ===== Admin Page Logic =====
 import { DEFAULT_DATA, getData, saveData, resetData, exportData, importData, addLink, removeLink } from './data.js';
 
-const ADMIN_PASSWORD = 'jenyxo';
+const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD;
 const AUTH_KEY = 'portaly_admin_authenticated';
 
 let appData = null;

@@ -5,7 +5,7 @@ import { initializeFirestore, doc, getDoc, setDoc, onSnapshot } from "firebase/f
 
 // Your Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyCPEfv1-5pcFGIMiV5rF7EhLej2Wqy5ZhI",
+  apiKey: import.meta.env.VITE_GCP_API_KEY,
   authDomain: "porfile-cb9ea.firebaseapp.com",
   projectId: "porfile-cb9ea",
   storageBucket: "porfile-cb9ea.firebasestorage.app",

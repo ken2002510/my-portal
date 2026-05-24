@@ -18,29 +18,19 @@ const DECORATIONS = ['⭐', '💖', '🌸', '☁️', '✨', '🦋', '🌈', '�
 let appData = null;
 
 // Initialize on DOM ready
-document.addEventListener('DOMContentLoaded', async () => {
-  // Show a simple loading text initially
-  document.body.insertAdjacentHTML('afterbegin', '<div id="app-loading" style="position:fixed;inset:0;background:var(--bg-gradient);z-index:9999;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:bold;color:var(--pink-500);">載入中 ✨...</div>');
-
+document.addEventListener('DOMContentLoaded', () => {
   appData = structuredClone(DEFAULT_DATA);
   renderPage();
   renderDecorations();
   initExchangeRates();
-  document.getElementById('app-loading')?.remove();
 
-  try {
-    appData = await getData();
-    renderPage();
-    initExchangeRates();
-  } catch (err) {
-    console.error("Error loading data", err);
-  }
-
-  // Set up real-time listener from Firebase
+  // 只用這一個，它連線後會自動觸發，不需要另外 getData()
   listenForChanges((newData) => {
     appData = newData;
     renderPage();
     initExchangeRates();
+  }, (err) => {
+    console.error('Firebase 監聽失敗', err);
   });
 });
 
@@ -53,7 +43,7 @@ function renderPage() {
 
 function renderProfile() {
   const { profile } = appData;
-  
+
   const avatarImg = document.getElementById('avatar-img');
   const profileName = document.getElementById('profile-name');
   const profileBio = document.getElementById('profile-bio');
@@ -68,10 +58,10 @@ function renderSocials() {
   if (!container) return;
 
   container.innerHTML = '';
-  
+
   for (const social of appData.socials) {
     if (!social.url) continue;
-    
+
     const btn = document.createElement('a');
     btn.href = social.url;
     btn.target = '_blank';
@@ -79,7 +69,7 @@ function renderSocials() {
     btn.className = `social-btn ${social.platform}`;
     btn.innerHTML = SOCIAL_ICONS[social.platform] || '';
     btn.title = social.label || social.platform;
-    
+
     container.appendChild(btn);
   }
 }
@@ -132,7 +122,7 @@ function renderGoogleForm() {
     if (embedUrl.includes('/viewform')) {
       embedUrl = embedUrl.replace('/viewform', '/viewform?embedded=true');
     }
-    
+
     contentEl.innerHTML = `
       <div class="form-iframe-wrapper">
         <iframe src="${escapeHtml(embedUrl)}" 
@@ -173,7 +163,7 @@ async function loadRates(forceRefresh = false) {
   const grid = document.getElementById('exchange-grid');
   const updateTime = document.getElementById('exchange-update');
   const refreshBtn = document.getElementById('exchange-refresh');
-  
+
   if (!grid) return;
 
   if (forceRefresh) {
@@ -227,14 +217,14 @@ function renderDecorations() {
     const deco = document.createElement('span');
     deco.className = 'deco';
     deco.textContent = DECORATIONS[i % DECORATIONS.length];
-    
+
     deco.style.left = `${Math.random() * 100}%`;
     deco.style.top = `${Math.random() * 100}%`;
     deco.style.fontSize = `${1 + Math.random() * 1.5}rem`;
     deco.style.opacity = 0.15 + Math.random() * 0.25;
     deco.style.animation = `${Math.random() > 0.5 ? 'float' : 'floatSlow'} ${5 + Math.random() * 8}s ease-in-out infinite`;
     deco.style.animationDelay = `${Math.random() * 5}s`;
-    
+
     container.appendChild(deco);
   }
 }
