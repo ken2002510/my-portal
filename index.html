@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -9,11 +10,26 @@
   <meta property="og:description" content="歡迎來到我的個人連結頁面！" />
   <meta property="og:type" content="website" />
   <meta name="theme-color" content="#fce4ec" />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>" />
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>" />
   <link rel="stylesheet" href="/css/common.css" />
   <link rel="stylesheet" href="/css/visitor.css" />
 </head>
+
 <body>
+
+  <!-- 載入畫面 -->
+  <div id="loading-screen">
+    <div class="loading-card">
+      <div class="loading-avatar">🌸</div>
+      <div class="loading-name">載入中</div>
+      <div class="loading-sub">正在讀取你的小天地...</div>
+      <div class="loading-dots">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+
   <div class="visitor-bg">
     <!-- Floating decorations -->
     <div class="floating-decos" id="floating-decos"></div>
@@ -84,4 +100,5 @@
 
   <script type="module" src="/js/visitor.js"></script>
 </body>
+
 </html>

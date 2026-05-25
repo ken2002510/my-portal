@@ -29,6 +29,10 @@ document.addEventListener('DOMContentLoaded', () => {
     appData = newData;
     renderPage();
     initExchangeRates();
+
+    // Firebase 資料回來後，隱藏載入畫面
+    const screen = document.getElementById('loading-screen');
+    if (screen) screen.classList.add('hide');
   }, (err) => {
     console.error('Firebase 監聽失敗', err);
   });
